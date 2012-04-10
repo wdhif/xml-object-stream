@@ -1,0 +1,25 @@
+{
+  "author": "Sean Hess <sean@i.tv>",
+  "name": "xml-events",
+  "description": "An event-driven syntax for parsing xml streams with node-expat",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/idottv/node-xml-events.git"
+  },
+  "main": "index.js",
+  "scripts":{
+    "test":"node_modules/.bin/mocha test.js"
+  },
+  "dependencies": {
+    "node-expat":"1.5.0",
+    "underscore":"1.3.3"
+  },
+  "devDependencies": {
+    "mocha":"1.0.1"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
