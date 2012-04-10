@@ -14,7 +14,7 @@ Installation
 Parsing
 -------
 
-Contextual events are fired when the parser finishes parsing a descendent's attributes and text. You can then listen for futher descendents on the matched node. 
+Contextual events are fired when the parser finishes parsing a descendant's attributes and text. You can then listen for futher descendants on the matched node. 
 
     var xml = require('xml-events')
     var data = "<root><person age='32'><name>Somebody</name></person></root>"
