@@ -1,66 +1,106 @@
 
-xml-events
-==========
+xml-object-stream
+=================
 
-This module provides a more usable interface to [node-expat](https://github.com/astro/node-expat)'s fast SAX parser. 
+Streaming parsers are hard to work with, but sometimes you need to parse a really big file. This module gives you the best of both worlds. You give it a specific node to look for, and it will return each of those nodes as an object, one at a time, without loading the whole document into memory at once.
 
+Uses node-expat for fast(est) xml processing.
 
 Installation 
 ------------
 
-    npm install xml-events
+    npm install xml-object-stream
 
+Parsing a ReadStream
+--------------------
 
-Parsing
--------
+Let's say we have a file, hugePersonDirectory.xml, that looks something like this:
 
-Contextual events are fired when the parser finishes parsing a descendant's attributes and text. You can then listen for futher descendants on the matched node. 
+    <root>
+      <people>
+        <person>...</person>
+        <person>...</person>
+        <person>...</person>
+        <person>...</person>
+        <person>...</person>
+      </people>
+    <root>
 
-    var xml = require('xml-events')
-    var data = "<root><person age='32'><name>Somebody</name></person></root>"
-    xml.parse(data, function(err, root) {
+You want to do something with each person object, but you can't load them all into memory at once. 
 
-        // find <person> nodes anywhere in the document
-        root.on('person', function(person) {
+    xml = require 'xml-object.stream'
+    fs = require 'fs'
+
+    readStream = fs.createReadStream 'hugePersonDirectory.xml'
+    parser = xml.parse readStream
+
+    parser.each 'person', (person) ->
+      # do something with the person!
+
+The parser emits some streaming events
     
-            // find <name> nodes anywhere within this <person>
-            person.on('name', function(name) {
-                
-                // person is still in scope, so we can access its attributes.
-                console.log("Found person: " + name.text + " with age " + person.attr('age'))
-            })
-        })
+    parser.on 'end', ->
+    parser.on 'error', (err) ->
+    parser.on 'close', ->
 
-        root.onEnd(function() {
-            console.log("Done parsing the document")
-        })
-    })
+You can pause and resume it if the xml parser gets too far ahead of your processing
 
-Streaming
----------
+    parser.pause()
 
-You can stream data to the parser with `xml.parser`. 
+    # then when you catch back up
+    parser.resume()
 
-    var xml = require('xml-events')
-    var parse = xml.parser(function(err, root) {
-        root.on('name', function(name) {
-            console.log("found name: " + name)
-        })
-    })
+Since the parser takes any read stream, you can use it to parse urls without saving them to disk. 
 
-    parse("<root><nam")
-    parse("e>bob</nam")
-    parse("e></root>")
+Node Object Format
+-----------------
 
-If you are using a file stream, just listen to the `data` event and pass it to `parse`
+Nodes are converted to objects. For the following xml:
 
-    var parse = xml.parser(function(err, root) {
-        ...
-    })
+    <person id="asdf123">
+      <firstName>Bob</firstName>
+      <lastName>Wilson</lastName>
+      <employee id="asdf123"/>
+      <note author="Joe">Bob is a poor worker</note>
+      <note author="Jim">Bob spends all his time parsing xml</note>
+    </person>
 
-    var stream = fs.createReadStream("somefile.xml")
-    stream.on('data', function(data) {
-        parse(data)
-    })
+You can access attributes with the `$` property
+
+    person.$.id == "asdf123"
+
+You can access the *last* child of a given name by its name. Text is accessed with $text
+  
+    person.firstName.$text == "Bob"
+
+Node names are available under the `$name` property
+
+    person.$name == "person"
+
+Every child node is put into the `$children` array
+
+    notes = person.$children.filter (child) ->
+      return (child.$name is "note")
+
+    notes[0].$.author == "Joe"
+
+API Reference
+-------------
+
+    exports.parse = (nodeReadStream) ->
+      # returns a Parser
+
+    class Parser
+
+      # calls cb each time it finds a node with that name
+      each: (nodeName, cb) ->
+
+      # bind to 'end', 'error', and 'close'
+      on: (eventName, cb) ->
+
+      # pause or resume the read stream to let you processor catch up
+      pause: ->
+      resume: ->
+      
+
     
-
