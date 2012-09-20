@@ -1,8 +1,8 @@
 {
   "author": "Sean Hess <sean@i.tv>",
   "name": "xml-object-stream",
-  "description": "Simple streaming syntax to parse large xml files",
-  "version": "0.0.2",
+  "description": "Low-memory streaming xml parser for node.js. Returns each node as an object. Uses node-expat",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/idottv/xml-object-stream.git"
@@ -21,6 +21,6 @@
   },
   "optionalDependencies": {},
   "engines": {
-    "node": "*"
+    "node": "0.8.x"
   }
 }
