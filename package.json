@@ -1,11 +1,11 @@
 {
   "author": "Sean Hess <sean@i.tv>",
-  "name": "xml-events",
-  "description": "An event-driven syntax for parsing xml streams with node-expat",
+  "name": "xml-object-stream",
+  "description": "Simple streaming syntax to parse large xml files",
   "version": "0.0.2",
   "repository": {
     "type": "git",
-    "url": "git://github.com/idottv/node-xml-events.git"
+    "url": "git://github.com/idottv/xml-object-stream.git"
   },
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,7 @@
     "prepublish": "coffee -c index.coffee"
   },
   "dependencies": {
+    "node-expat": "~1.6.1"
   },
   "devDependencies": {
     "mocha": "~1.4.2",

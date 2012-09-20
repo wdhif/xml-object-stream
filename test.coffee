@@ -2,30 +2,19 @@ assert = require 'assert'
 {Stream} = require 'stream'
 {parse} = require './index'
 
+
+
+streamData = (xml) ->
+  stream = new Stream()
+  process.nextTick ->
+    stream.emit 'data', xml
+    stream.emit 'end'
+  return stream
+
 describe "xml streamer thing", ->
 
   it "should parse", (done) ->
-    stream = new Stream()
     foundBook = false
-
-    parser = parse stream
-    parser.each 'book', (book) ->
-      console.log "BOOK", book
-      foundBook = true
-      assert.ok book
-      assert.equal book.$.asdf, "asdf"
-      assert.equal book.title.$text, "Title"
-      assert.equal book.description.$text, "stuff"
-
-      authors = book.$children.filter (node) -> node.$name is "author"
-      assert.equal authors.length, 2
-      assert.equal authors[0].$.name, "john"
-      assert.equal authors[1].name.$text, "will"
-
-    parser.on 'end', ->
-      console.log 'ended'
-      assert.ok foundBook
-      done()
 
     xml = """
     <root>
@@ -38,7 +27,53 @@ describe "xml streamer thing", ->
     </root>
     """
 
-    stream.emit 'data', xml
-    stream.emit 'end'
+    stream = streamData xml
+
+    parser = parse stream
+    parser.each 'book', (book) ->
+      foundBook = true
+      assert.ok book
+      assert.equal book.$.asdf, "asdf"
+      assert.equal book.title.$text, "Title"
+      assert.equal book.description.$text, "stuff"
+
+      authors = book.$children.filter (node) -> node.$name is "author"
+      assert.equal authors.length, 2
+      assert.equal authors[0].$.name, "john"
+      assert.equal authors[1].name.$text, "will"
+
+    parser.on 'end', ->
+      assert.ok foundBook
+      done()
+
+
+  it 'should find all the nodes', (done) ->
+    found = []
+
+    xml = """
+    <root>
+      <items>
+        <item name="1"/>
+        <item name="2"/>
+        <item name="3"/>
+        <item name="4"/>
+        <item name="5"/>
+        <item name="6"/>
+        <item name="7"/>
+        <item name="8"/>
+      </items>
+    </root>
+    """
+
+    stream = streamData xml
+
+    parser = parse stream
+    parser.each 'item', (item) ->
+      found.push item
+
+    parser.on 'end', ->
+      assert.equal found.length, 8
+      done()
+
 
 

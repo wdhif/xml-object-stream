@@ -37,7 +37,8 @@ exports.parse = (readStream) ->
       emitter.emit 'error', err
 
     parser.on 'startElement', (name, attrs) ->
-      currentNode = {$name: name, $:attrs, $parent: currentNode}
+      if name is nodeName or currentNode
+        currentNode = {$name: name, $:attrs, $parent: currentNode}
 
     parser.on 'text', (text) ->
       return if not currentNode?
@@ -45,19 +46,24 @@ exports.parse = (readStream) ->
       currentNode.$text += text
 
 
+    # ok, we only want to collect things if we are under a current node
+
     parser.on 'endElement', (name) ->
       return if not currentNode?
 
-      parent = currentNode.$parent
+      if currentNode.$name is nodeName
 
+        if currentNode.$parent
+          throw new Error "Top-level node should not have a parent. Possible memory leak"
+
+        eachNodeDelayed currentNode
+
+      parent = currentNode.$parent
       if parent?
         delete currentNode.$parent
         parent.$children ?= []
         parent.$children.push currentNode
         parent[currentNode.$name] = currentNode
-   
-      if currentNode.$name is nodeName
-        eachNodeDelayed currentNode
 
       currentNode = parent
 
