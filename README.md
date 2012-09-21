@@ -108,7 +108,7 @@ Options
 
     {
       # removes all namespace information from the node names
-      stripNamespaces: false
+      stripNamespaces: true
     }
 
     
