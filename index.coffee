@@ -1,27 +1,18 @@
 expat = require 'node-expat'
 events = require 'events'
 
-
-# simply parse a read stream as xml
-# give the system the base node, 
-
-exports.parse = (readStream) ->
+exports.parse = (readStream, options = {}) ->
+  options.stripNamespaces ?= true
 
   parser = new expat.Parser("UTF-8")
   emitter = new events.EventEmitter()
 
-  readStream.on 'data', (data) ->
-    parser.parse data.toString()
+  readStream.on 'data', (data) -> parser.parse data.toString()
+  readStream.on 'end', -> process.nextTick -> emitter.emit 'end'
+  readStream.on 'error', (err) -> emitter.emit 'error', err
+  readStream.on 'close', -> emitter.emit 'close'
 
-  readStream.on 'end', ->
-    process.nextTick ->
-      emitter.emit 'end'
 
-  readStream.on 'error', (err) ->
-    emitter.emit 'error', err
-
-  readStream.on 'close', ->
-    emitter.emit 'close'
 
 
   # parse EVERYTHING inside of them.
@@ -37,6 +28,7 @@ exports.parse = (readStream) ->
       emitter.emit 'error', err
 
     parser.on 'startElement', (name, attrs) ->
+      if options.stripNamespaces then name = stripNamespace name
       if name is nodeName or currentNode
         currentNode = {$name: name, $:attrs, $parent: currentNode}
 
@@ -75,4 +67,4 @@ exports.parse = (readStream) ->
     resume: -> readStream.resume()
   }
 
-
+stripNamespace = (name) -> name.replace /^.*:/, ""

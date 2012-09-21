@@ -87,7 +87,7 @@ Every child node is put into the `$children` array
 API Reference
 -------------
 
-    exports.parse = (nodeReadStream) ->
+    exports.parse = (nodeReadStream, [options]) ->
       # returns a Parser
 
     class Parser
@@ -102,5 +102,13 @@ API Reference
       pause: ->
       resume: ->
       
+
+Options
+----------
+
+    {
+      # removes all namespace information from the node names
+      stripNamespaces: false
+    }
 
     

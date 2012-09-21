@@ -76,4 +76,36 @@ describe "xml streamer thing", ->
       done()
 
 
+  describe 'namespaces', ->
+    it 'should strip namespaces by default', (done) ->
+      stream = streamData """
+        <root>
+          <me:item>one</me:item>
+        </root>
+      """
+
+      found = []
+      parser = parse stream
+      parser.each 'item', (item) ->
+        found.push item
+        assert.equal item.$text, "one"
+      parser.on 'end', ->
+        assert.equal found.length, 1
+        done()
+
+    it 'should preserve them if you turn it off', (done) ->
+      stream = streamData """
+        <root>
+          <me:item>one</me:item>
+        </root>
+      """
+
+      found = []
+      parser = parse stream, {stripNamespaces: false}
+      parser.each 'me:item', (item) ->
+        found.push item
+        assert.equal item.$text, "one"
+      parser.on 'end', ->
+        assert.equal found.length, 1
+        done()
 
