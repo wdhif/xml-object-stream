@@ -1,14 +1,15 @@
 {
-  "author": "Sean Hess <sean@i.tv>",
+  "author": "Wassim DHIF <wassimdhif@gmail.com>",
   "contributors": [
+    "Sean Hess <sean@i.tv>",
     "Jamison Dance <jergason@gmail.com> (http://jamisondance.com)"
   ],
-  "name": "xml-object-stream",
-  "description": "Low-memory streaming xml parser for node.js. Returns each node as an object. Uses node-expat",
-  "version": "0.3.0",
+  "name": "xml-object-stream-wdhif",
+  "description": "Low-memory streaming xml parser for node.js. Returns each node as an object. Uses node-expat. Fork of the original project for personal purposes",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/idottv/xml-object-stream.git"
+    "url": "git://github.com/wdhif/xml-object-stream.git"
   },
   "main": "index.js",
   "scripts": {
