@@ -10,4 +10,6 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+before_install:
+  - npm install coffee
 script: npm test
