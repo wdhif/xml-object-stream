@@ -2,6 +2,8 @@
 xml-object-stream
 =================
 
+[![Build Status](https://travis-ci.org/wdhif/xml-object-stream.svg?branch=master)](https://travis-ci.org/wdhif/xml-object-stream) [![Greenkeeper badge](https://badges.greenkeeper.io/wdhif/xml-object-stream.svg)](https://greenkeeper.io/)
+
 Streaming parsers are hard to work with, but sometimes you need to parse a really big file. This module gives you the best of both worlds. You give it a specific node to look for, and it will return each of those nodes as an object, one at a time, without loading the whole document into memory at once.
 
 Uses node-expat for fast(est) xml processing.
